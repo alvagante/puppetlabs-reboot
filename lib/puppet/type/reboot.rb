@@ -53,13 +53,15 @@ Puppet::Type.newtype(:reboot) do
           subscribe       => Package['Microsoft .NET Framework 4.5'],
         }
 
-    On windows we can limit the reasons for a pending reboot.
+    On windows we can limit the reasons for a pending reboot and the amount of
+    retries to perform in a given time (to avoid reboot loops).
 
     Sample usage:
 
         reboot { 'renames only':
           when            => pending,
           onlyif          => 'pending_rename_file_operations',
+          retries         => 5,
         }
   EOT
 
@@ -196,6 +198,34 @@ Puppet::Type.newtype(:reboot) do
     end
 
     defaultto 60
+  end
+
+  newparam(:retries) do
+    desc "The amount of reboots to perform in the given retries_interval.
+      Default is 0, unlimited. When an integer is specified, Puppet will
+      actually reboot the system only if there are has been less :retries
+      in the provided :retries_interval."
+
+    validate do |value|
+      if value.to_s !~ /^\d+$/
+        raise ArgumentError, "The retries must be an integer."
+      end
+    end
+
+    defaultto 0
+  end
+
+  newparam(:retries_interval) do
+    desc "The interval in hours in which to evaluate if there have been
+      too many reoot :retries. Default is 24 hours."
+
+    validate do |value|
+      if value.to_s !~ /^\d+$/
+        raise ArgumentError, "The retries:interval must be an integer."
+      end
+    end
+
+    defaultto 24
   end
 
   @rebooting = false
