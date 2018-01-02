@@ -52,9 +52,9 @@ Puppet::Type.type(:reboot).provide :windows do
     else
       FileUtils.touch(retries_log)
       total_reboots = File.open(retries_log) { |f| f.count }
-      retries_date = IO.readlines(retries_log)[(total_reboots. - @resource[:retries]).to_i]
+      retries_date = IO.readlines(retries_log)[(total_reboots - @resource[:retries]).to_i - 1]
       interval_date = Time.now - ( @resource[:retries_interval] * 60 * 60 )
-      retries_timestamp = Time.parse(retries_date.to_s).to_i
+      retries_timestamp = retries_date.nil? ? '0' : Time.parse(retries_date.to_s).to_i
       interval_timestamp = interval_date.to_i
       Puppet.info("total_reboots = #{total_reboots} - retries_date = #{retries_date} - interval_date = #{interval_date} - retries_timestamp = #{retries_timestamp} - interval_timestamp = #{interval_timestamp}")
       if retries_date.nil? or retries_timestamp < interval_timestamp

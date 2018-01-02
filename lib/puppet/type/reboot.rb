@@ -208,7 +208,7 @@ Puppet::Type.newtype(:reboot) do
 
     validate do |value|
       if value.to_s !~ /^\d+$/
-        raise ArgumentError, "The retries must be an integer."
+        raise ArgumentError, "Retries value must be an integer."
       end
     end
 
@@ -221,7 +221,7 @@ Puppet::Type.newtype(:reboot) do
 
     validate do |value|
       if value.to_s !~ /^\d+$/
-        raise ArgumentError, "The retries:interval must be an integer."
+        raise ArgumentError, "Retries_interval must be an integer."
       end
     end
 

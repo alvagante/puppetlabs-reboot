@@ -183,6 +183,42 @@ describe Puppet::Type.type(:reboot) do
     end
   end
 
+  context "parameter :retries" do
+    it "should default :retries to 0" do
+      resource[:retries].must == 0
+    end
+
+    it "should accept an integer" do
+      resource[:retries] = 5
+    end
+
+    ["later", :later, {}, [], true].each do |retries|
+      it "should reject a non-integer (#{retries.class}) value" do
+        expect {
+          resource[:retries] = retries
+        }.to raise_error(Puppet::ResourceError, /Retries value must be an integer/)
+      end
+    end
+  end
+
+  context "parameter :retries_interval" do
+    it "should default :retries_interval to 24" do
+      resource[:retries_interval].must == 24
+    end
+
+    it "should accept an integer" do
+      resource[:retries_interval] = 5
+    end
+
+    ["later", :later, {}, [], true].each do |retries_interval|
+      it "should reject a non-integer (#{retries_interval.class}) value" do
+        expect {
+          resource[:retries_interval] = retries_interval
+        }.to raise_error(Puppet::ResourceError, /Retries_interval must be an integer./)
+      end
+    end
+  end
+
   context "multiple reboot resources" do
     let(:resource2) { Puppet::Type.type(:reboot).new(:name => "reboot2") }
     let(:provider2) { Puppet::Provider.new(resource2) }
