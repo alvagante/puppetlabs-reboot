@@ -62,7 +62,7 @@ Puppet::Type.type(:reboot).provide :posix do
     flags = shutdown_flags % [timeout, @resource[:message]]
     shutdown_cmd = [shutdown_path, flags, '</dev/null', '>/dev/null', '2>&1', '&'].join(' ')
 
-#    check_retries
+    check_retries
     async_shutdown(shutdown_cmd)
   end
 
