@@ -1,3 +1,7 @@
+require 'pathname'
+require Pathname.new(__FILE__).dirname + '../../../' + 'puppet_x/reboot/check_retries'
+#require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'puppet_x', 'reboot', 'check_retries.rb'))
+
 Puppet::Type.type(:reboot).provide :posix do
   desc "POSIX provider for the reboot type.
 
@@ -7,8 +11,9 @@ Puppet::Type.type(:reboot).provide :posix do
   confine :feature => :posix
   confine :false => (Facter.value(:kernel) == 'HP-UX')
   defaultfor :feature => :posix
-
   commands :shutdown => 'shutdown'
+
+  include PuppetX::Reboot::CheckRetries
 
   def shutdown_flags
     case Facter.value(:kernel)
@@ -56,6 +61,8 @@ Puppet::Type.type(:reboot).provide :posix do
 
     flags = shutdown_flags % [timeout, @resource[:message]]
     shutdown_cmd = [shutdown_path, flags, '</dev/null', '>/dev/null', '2>&1', '&'].join(' ')
+
+#    check_retries
     async_shutdown(shutdown_cmd)
   end
 
