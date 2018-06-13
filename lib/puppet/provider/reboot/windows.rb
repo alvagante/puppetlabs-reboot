@@ -62,9 +62,10 @@ Puppet::Type.type(:reboot).provide :windows do
           f.puts Time.now
         end
         Puppet.notice("Retries count not exceeded. Triggering reboot.")
+        return true
       else
         Puppet.warning("Reboot skipped because the maximum number of retries in the given retries_period has been exceeded.")
-        abort
+        return false
       end
     end
   end
@@ -87,8 +88,7 @@ Puppet::Type.type(:reboot).provide :windows do
     # E P     4       1       Application: Maintenance (Planned)
     shutdown_cmd = [shutdown_path, '/r', '/t', @resource[:timeout], '/d', 'p:4:1', '/c', "\"#{@resource[:message]}\""].join(' ')
 
-    check_retries
-    async_shutdown(shutdown_cmd)
+    check_retries && async_shutdown(shutdown_cmd)
   end
 
   def async_shutdown(shutdown_cmd)

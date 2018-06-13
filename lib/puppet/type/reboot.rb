@@ -217,7 +217,7 @@ Puppet::Type.newtype(:reboot) do
 
   newparam(:retries_interval) do
     desc "The interval in hours in which to evaluate if there have been
-      too many reoot :retries. Default is 24 hours."
+      too many reboot :retries. Default is 24 hours."
 
     validate do |value|
       if value.to_s !~ /^\d+$/
